@@ -1,0 +1,32 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Downloaded & generated files (don't commit these)
+downloads/
+static/generated/*.mp4
+static/generated/*.zip
+static/generated/*.avi
+
+# Desktop shortcut scripts
+launch_app.pyw
+create_desktop_shortcut.py
+
+# Windows-only files
+*.bat
+*.ico
+
+# IDE files
+.vscode/
+.idea/
+
+# Environment variables
+.env
