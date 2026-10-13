@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — ShortCraft AI | Creator Studio</title>
+  <meta name="description" content="Sign in to ShortCraft AI – the most powerful AI-driven YouTube Shorts generator for creators." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+<body class="login-body">
+
+  <!-- Ambient Background -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+  <div class="login-grid-bg"></div>
+
+  <!-- Login Page Wrapper -->
+  <div class="login-page-wrapper">
+
+    <!-- Brand -->
+    <a href="login.html" class="login-brand">
+      <div class="logo-icon login-logo-icon">
+        <i class="fa-solid fa-bolt-lightning"></i>
+      </div>
+      <span class="brand-title gradient-text">ShortCraft AI</span>
+      <span class="brand-badge">BETA</span>
+    </a>
+
+    <!-- Login Card -->
+    <div class="glass-panel login-card">
+
+      <!-- Card Header -->
+      <div class="login-card-header">
+        <div class="login-icon-ring">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <h1 class="login-title gradient-text">Welcome Back</h1>
+        <p class="login-subtitle">Sign in to your Creator Studio account</p>
+      </div>
+
+      <!-- Error Alert (hidden by default) -->
+      <div class="login-error-alert" id="login-error-alert" style="display:none;">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span id="login-error-msg">Invalid username or password. Please try again.</span>
+      </div>
+
+      <!-- Login Form -->
+      <form class="login-form" id="login-form" novalidate autocomplete="off">
+
+        <!-- Username Field -->
+        <div class="field-group" id="field-username">
+          <label class="field-label" for="input-username">
+            <i class="fa-regular fa-user"></i> Username
+          </label>
+          <div class="field-input-wrap">
+            <input
+              type="text"
+              id="input-username"
+              class="field-input"
+              placeholder="Enter your username"
+              autocomplete="username"
+              spellcheck="false"
+            />
+            <span class="field-status-icon" id="icon-username"></span>
+          </div>
+          <span class="field-error-msg" id="err-username">Please enter your username.</span>
+        </div>
+
+        <!-- Password Field -->
+        <div class="field-group" id="field-password">
+          <label class="field-label" for="input-password">
+            <i class="fa-solid fa-key"></i> Password
+          </label>
+          <div class="field-input-wrap">
+            <input
+              type="password"
+              id="input-password"
+              class="field-input"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            />
+            <button type="button" class="toggle-password-btn" id="btn-toggle-password" title="Show / hide password" aria-label="Toggle password visibility">
+              <i class="fa-regular fa-eye" id="icon-eye"></i>
+            </button>
+          </div>
+          <span class="field-error-msg" id="err-password">Please enter your password.</span>
+        </div>
+
+        <!-- Options Row -->
+        <div class="login-options-row">
+          <label class="remember-label" for="remember-me">
+            <input type="checkbox" class="remember-checkbox" id="remember-me" />
+            <span class="custom-checkbox"></span>
+            <span class="remember-text">Remember me</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-login-submit" id="btn-login-submit">
+          <span class="btn-login-text" id="btn-login-text">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            Sign In
+          </span>
+          <span class="btn-login-loader" id="btn-login-loader" style="display:none;">
+            <span class="spinner-dot-sm"></span>
+            Signing in…
+          </span>
+        </button>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="login-divider"><span>secured access</span></div>
+
+      <!-- Security Badges -->
+      <div class="login-security-badges">
+        <span class="security-badge">
+          <i class="fa-solid fa-shield-halved"></i> Local Auth
+        </span>
+        <span class="security-badge">
+          <i class="fa-solid fa-lock"></i> Encrypted
+        </span>
+        <span class="security-badge">
+          <i class="fa-solid fa-circle-check"></i> Private
+        </span>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <p class="login-footer-text">
+      ShortCraft AI &copy; 2025 &mdash; All shorts saved locally to your machine.
+    </p>
+
+  </div>
+
+  <script>
+    // ── Login Form Logic ──────────────────────────────────────────────────────
+
+    const form          = document.getElementById('login-form');
+    const usernameInput = document.getElementById('input-username');
+    const passwordInput = document.getElementById('input-password');
+    const submitBtn     = document.getElementById('btn-login-submit');
+    const btnText       = document.getElementById('btn-login-text');
+    const btnLoader     = document.getElementById('btn-login-loader');
+    const errorAlert    = document.getElementById('login-error-alert');
+    const errorMsg      = document.getElementById('login-error-msg');
+
+    // Password visibility toggle
+    document.getElementById('btn-toggle-password').addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      document.getElementById('icon-eye').className = isPassword
+        ? 'fa-regular fa-eye-slash'
+        : 'fa-regular fa-eye';
+    });
+
+    // Inline validation helpers
+    function setFieldState(fieldId, iconId, state) {
+      const group = document.getElementById(fieldId);
+      group.classList.remove('valid', 'invalid');
+      const icon = document.getElementById(iconId);
+      if (state === 'valid') {
+        group.classList.add('valid');
+        icon.innerHTML = '<i class="fa-solid fa-circle-check text-green"></i>';
+      } else if (state === 'invalid') {
+        group.classList.add('invalid');
+        icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red"></i>';
+      } else {
+        icon.innerHTML = '';
+      }
+    }
+
+    usernameInput.addEventListener('input', () => {
+      if (usernameInput.value.trim().length > 0) {
+        setFieldState('field-username', 'icon-username', 'valid');
+      } else {
+        setFieldState('field-username', 'icon-username', '');
+      }
+    });
+
+    passwordInput.addEventListener('input', () => {
+      if (passwordInput.value.length > 0) {
+        setFieldState('field-password', 'icon-password', 'valid');
+      } else {
+        setFieldState('field-password', 'icon-password', '');
+      }
+    });
+
+    // Form submit — calls /api/login
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      let valid = true;
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username) {
+        setFieldState('field-username', 'icon-username', 'invalid');
+        valid = false;
+      }
+      if (!password) {
+        setFieldState('field-password', 'icon-password', 'invalid');
+        valid = false;
+      }
+
+      if (!valid) {
+        form.classList.add('shake');
+        setTimeout(() => form.classList.remove('shake'), 500);
+        return;
+      }
+
+      // Show loader
+      submitBtn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoader.style.display = 'flex';
+      errorAlert.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          window.location.href = 'index.html';
+        } else {
+          errorMsg.textContent = data.error || 'Invalid credentials. Please try again.';
+          errorAlert.style.display = 'flex';
+          form.classList.add('shake');
+          setTimeout(() => form.classList.remove('shake'), 500);
+          setFieldState('field-username', 'icon-username', 'invalid');
+          setFieldState('field-password', 'icon-password', 'invalid');
+        }
+      } catch (err) {
+        errorMsg.textContent = 'Server se connect nahi ho pa raha. Kripya app restart karein.';
+        errorAlert.style.display = 'flex';
+      } finally {
+        submitBtn.disabled = false;
+        btnText.style.display = 'flex';
+        btnLoader.style.display = 'none';
+      }
+    });
+
+    // Pre-fill from localStorage if remember-me was set
+    const saved = localStorage.getItem('sc_remember_user');
+    if (saved) {
+      usernameInput.value = saved;
+      document.getElementById('remember-me').checked = true;
+      setFieldState('field-username', 'icon-username', 'valid');
+    }
+
+    form.addEventListener('submit', () => {
+      if (document.getElementById('remember-me').checked) {
+        localStorage.setItem('sc_remember_user', usernameInput.value.trim());
+      } else {
+        localStorage.removeItem('sc_remember_user');
+      }
+    });
+  </script>
+</body>
+</html>

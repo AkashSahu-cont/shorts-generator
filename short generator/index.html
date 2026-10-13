@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShortCraft AI — Creator Studio</title>
+  <meta name="description" content="AI-powered YouTube Shorts generator. Paste a video link and get viral-ready shorts in minutes." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Ambient Glow Orbs -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- ── Navigation ─────────────────────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="logo-icon">
+          <i class="fa-solid fa-bolt-lightning"></i>
+        </div>
+        <span class="brand-title gradient-text">ShortCraft AI</span>
+        <span class="brand-badge">BETA</span>
+      </a>
+
+      <div class="nav-actions">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span>Engine Ready</span>
+        </div>
+        <a href="index.html" class="nav-link">
+          <i class="fa-solid fa-house"></i> Studio
+        </a>
+        <a href="#" class="nav-link nav-logout-btn" id="btn-logout" onclick="logout(); return false;">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Main Content ────────────────────────────────────────────────────────── -->
+  <main class="main-wrapper">
+
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-badge">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        AI-Powered Shorts Engine
+      </div>
+      <h1 class="hero-title">
+        Turn Long Videos Into<br />
+        <span class="gradient-text">Viral Shorts</span>
+      </h1>
+      <p class="hero-subtitle">
+        Paste a YouTube link or upload a video — our AI finds the best moments,
+        adds captions, and exports ready-to-upload Shorts in seconds.
+      </p>
+    </section>
+
+    <!-- ── Main Generator Card ─────────────────────────────────────────────── -->
+    <div class="glass-panel app-card">
+
+      <!-- Mode Tabs -->
+      <div class="mode-tabs">
+        <button id="tab-yt" class="tab-btn active" onclick="switchTab('youtube')">
+          <i class="fa-brands fa-youtube text-red"></i> YouTube URL
+        </button>
+        <button id="tab-upload" class="tab-btn" onclick="switchTab('upload')">
+          <i class="fa-solid fa-upload text-cyan"></i> Upload Video
+        </button>
+      </div>
+
+      <!-- ── YouTube Panel ────────────────────────────────────────────────── -->
+      <div id="panel-youtube">
+
+        <!-- URL Input -->
+        <div class="url-input-container">
+          <i class="fa-brands fa-youtube input-icon"></i>
+          <input
+            type="url"
+            id="youtube-url"
+            placeholder="Paste YouTube video URL here…  e.g. https://youtube.com/watch?v=..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="btn-paste" id="btn-paste" type="button" title="Paste from clipboard">
+            <i class="fa-regular fa-clipboard"></i> Paste
+          </button>
+          <button class="btn-fetch" id="btn-fetch-info" type="button">
+            <i class="fa-solid fa-magnifying-glass"></i> Check
+          </button>
+        </div>
+
+        <!-- Quick Samples -->
+        <div class="samples-row">
+          <span class="samples-label"><i class="fa-solid fa-flask"></i> Try sample:</span>
+          <button
+            class="chip-sample"
+            data-url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+          >
+            <i class="fa-solid fa-music"></i> Music
+          </button>
+          <button
+            class="chip-sample"
+            data-url="https://www.youtube.com/watch?v=jNQXAC9IVRw"
+          >
+            <i class="fa-solid fa-camera"></i> Vlog
+          </button>
+          <button
+            class="chip-sample"
+            data-url="https://www.youtube.com/watch?v=8S0FDjFBj8o"
+          >
+            <i class="fa-solid fa-microphone"></i> Talk
+          </button>
+        </div>
+
+        <!-- Video Preview Card (hidden until URL is fetched) -->
+        <div class="video-preview-card" id="video-preview-card" style="display:none;">
+          <div class="preview-thumb-box">
+            <img class="preview-thumb" id="video-thumb" src="" alt="Video thumbnail" />
+            <span class="preview-duration" id="video-duration">—</span>
+          </div>
+          <div class="preview-meta">
+            <div class="preview-title" id="video-title">Loading…</div>
+            <div class="preview-author">
+              <i class="fa-brands fa-youtube text-red"></i>
+              <span id="video-author">—</span>
+            </div>
+            <div class="preview-views">
+              <i class="fa-solid fa-eye"></i>
+              <span id="video-views">—</span> views
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /panel-youtube -->
+
+      <!-- ── Upload Panel ─────────────────────────────────────────────────── -->
+      <div id="panel-upload" style="display:none;">
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <div class="drop-title">Drag &amp; Drop your video here</div>
+          <div class="drop-hint">Supports MP4, MOV, AVI, MKV — max 2 GB</div>
+          <label for="file-input" class="btn-secondary" style="cursor:pointer;">
+            <i class="fa-solid fa-folder-open"></i> Browse Files
+          </label>
+          <input type="file" id="file-input" accept="video/*" style="display:none;" />
+          <span class="file-name-tag" id="file-preview-name" style="display:none;"></span>
+        </div>
+      </div>
+
+      <!-- ── Settings Grid ────────────────────────────────────────────────── -->
+      <div class="settings-grid">
+
+        <!-- Shorts Count -->
+        <div class="setting-box">
+          <span class="setting-label">
+            <i class="fa-solid fa-layer-group"></i> Number of Shorts
+          </span>
+          <div class="segmented-control" id="control-shorts-count">
+            <button class="segment-btn" data-value="1">1</button>
+            <button class="segment-btn active" data-value="3">3</button>
+            <button class="segment-btn" data-value="5">5</button>
+            <button class="segment-btn" data-value="7">7</button>
+          </div>
+        </div>
+
+        <!-- Clip Duration -->
+        <div class="setting-box">
+          <span class="setting-label">
+            <i class="fa-regular fa-clock"></i> Clip Duration
+          </span>
+          <div class="segmented-control" id="control-duration">
+            <button class="segment-btn" data-value="30">30s</button>
+            <button class="segment-btn active" data-value="45">45s</button>
+            <button class="segment-btn" data-value="60">60s</button>
+          </div>
+        </div>
+
+        <!-- Editing Style -->
+        <div class="setting-box">
+          <span class="setting-label">
+            <i class="fa-solid fa-film"></i> Editing Style
+          </span>
+          <select class="custom-select" id="select-style" style="width:100%;">
+            <option value="viral">🔥 Viral (Fast Cuts)</option>
+            <option value="podcast">🎙️ Podcast / Interview</option>
+            <option value="tutorial">📚 Tutorial / How-to</option>
+            <option value="cinematic">🎬 Cinematic</option>
+            <option value="energetic">⚡ Energetic / Sports</option>
+          </select>
+        </div>
+
+        <!-- Hook Title Overlay -->
+        <div class="setting-box">
+          <span class="setting-label">
+            <i class="fa-solid fa-heading"></i> Hook Title Overlay
+          </span>
+          <div class="toggle-group">
+            <label class="switch-container" for="toggle-hook-title">
+              <input type="checkbox" id="toggle-hook-title" checked />
+              <span class="switch-slider"></span>
+              <span class="switch-label">Auto-generate hook title on video</span>
+            </label>
+          </div>
+        </div>
+
+      </div><!-- /settings-grid -->
+
+      <!-- ── AI Subtitles Feature Card ──────────────────────────────────────── -->
+      <div class="subtitle-feature-card">
+        <div class="subtitle-card-header">
+          <div class="subtitle-header-left">
+            <div class="feature-icon-badge">
+              <i class="fa-solid fa-closed-captioning"></i>
+            </div>
+            <div class="feature-titles">
+              <div class="feature-main-title">
+                AI Auto-Subtitles
+                <span class="pro-tag">PRO</span>
+              </div>
+              <div class="feature-desc">
+                Whisper-powered speech recognition &amp; viral caption styles
+              </div>
+            </div>
+          </div>
+          <div class="subtitle-toggle-wrap">
+            <label class="switch-container" for="toggle-subtitles">
+              <input type="checkbox" id="toggle-subtitles" />
+              <span class="switch-slider"></span>
+              <span class="switch-label" id="subtitle-status-label">OFF</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Options Drawer (revealed when toggle is ON) -->
+        <div class="subtitle-options-drawer" id="subtitle-options-drawer" style="display:none;">
+          <div class="subtitle-options-grid">
+
+            <!-- Style Picker -->
+            <div class="sub-setting-box">
+              <span class="setting-label">
+                <i class="fa-solid fa-palette"></i> Caption Style
+              </span>
+              <div class="style-cards-selector">
+
+                <label class="style-radio-card active">
+                  <input type="radio" name="sub-style" value="hormozi" checked />
+                  <div class="style-card-content">
+                    <span class="style-icon">🔥</span>
+                    <span class="style-title">Hormozi</span>
+                    <span class="style-tag">Bold Yellow</span>
+                  </div>
+                </label>
+
+                <label class="style-radio-card">
+                  <input type="radio" name="sub-style" value="tiktok_neon" />
+                  <div class="style-card-content">
+                    <span class="style-icon">✨</span>
+                    <span class="style-title">TikTok Neon</span>
+                    <span class="style-tag">Cyan Glow</span>
+                  </div>
+                </label>
+
+                <label class="style-radio-card">
+                  <input type="radio" name="sub-style" value="karaoke" />
+                  <div class="style-card-content">
+                    <span class="style-icon">🎤</span>
+                    <span class="style-title">Karaoke</span>
+                    <span class="style-tag">Word-by-Word</span>
+                  </div>
+                </label>
+
+                <label class="style-radio-card">
+                  <input type="radio" name="sub-style" value="clean_box" />
+                  <div class="style-card-content">
+                    <span class="style-icon">🎬</span>
+                    <span class="style-title">Clean Box</span>
+                    <span class="style-tag">Dark BG</span>
+                  </div>
+                </label>
+
+                <label class="style-radio-card">
+                  <input type="radio" name="sub-style" value="fire_red" />
+                  <div class="style-card-content">
+                    <span class="style-icon">🔴</span>
+                    <span class="style-title">Fire Red</span>
+                    <span class="style-tag">Red Accent</span>
+                  </div>
+                </label>
+
+              </div>
+            </div><!-- /style picker -->
+
+            <!-- Language & Position -->
+            <div class="sub-setting-box">
+              <div class="sub-row-grid">
+                <div>
+                  <span class="setting-label" style="margin-bottom:.5rem;display:flex;">
+                    <i class="fa-solid fa-language"></i> Language
+                  </span>
+                  <select class="custom-select" id="select-subtitle-lang" style="width:100%;">
+                    <option value="auto">🌐 Auto-Detect</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="hi">🇮🇳 Hindi</option>
+                    <option value="es">🇪🇸 Spanish</option>
+                    <option value="fr">🇫🇷 French</option>
+                    <option value="de">🇩🇪 German</option>
+                    <option value="pt">🇧🇷 Portuguese</option>
+                    <option value="ja">🇯🇵 Japanese</option>
+                    <option value="ko">🇰🇷 Korean</option>
+                    <option value="zh">🇨🇳 Chinese</option>
+                  </select>
+                </div>
+                <div>
+                  <span class="setting-label" style="margin-bottom:.5rem;display:flex;">
+                    <i class="fa-solid fa-arrows-up-down"></i> Position
+                  </span>
+                  <select class="custom-select" id="select-subtitle-pos" style="width:100%;">
+                    <option value="bottom">⬇️ Bottom</option>
+                    <option value="center">↕️ Center</option>
+                    <option value="top">⬆️ Top</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Preview -->
+            <div class="sub-setting-box">
+              <div class="subtitle-live-preview">
+                <div class="preview-mini-label">
+                  <i class="fa-solid fa-eye"></i> Live Preview
+                </div>
+                <div class="preview-stage">
+                  <div class="preview-caption-bubble preview-hormozi" id="preview-bubble">
+                    <span class="highlight-word">THIS IS</span> VIRAL SHORTS AI
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /subtitle-options-grid -->
+        </div><!-- /subtitle-options-drawer -->
+
+      </div><!-- /subtitle-feature-card -->
+
+      <!-- ── D: Drive Banner ─────────────────────────────────────────────────── -->
+      <div class="d-drive-alert-banner">
+        <div class="d-banner-left">
+          <i class="fa-solid fa-hard-drive text-cyan"></i>
+          <span>
+            All shorts auto-saved to <code>D:\YouTube_Shorts</code> on your PC after generation
+          </span>
+        </div>
+        <button class="btn-open-d-folder" type="button" onclick="openDDriveFolder()">
+          <i class="fa-solid fa-folder-open"></i> Open Folder
+        </button>
+      </div>
+
+      <!-- ── Generate Button ────────────────────────────────────────────────── -->
+      <div class="action-footer">
+        <button class="btn-primary-glow" id="btn-generate" type="button">
+          <span>
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            Generate Viral Shorts
+          </span>
+          <span class="btn-subtext">AI will find the best moments automatically</span>
+        </button>
+      </div>
+
+      <!-- ── Progress Section ───────────────────────────────────────────────── -->
+      <div class="progress-container" id="progress-container" style="display:none;">
+        <div class="progress-header">
+          <div class="progress-title-wrap">
+            <div class="spinner-dot"></div>
+            <span class="progress-status-text" id="progress-status-text">Processing…</span>
+          </div>
+          <span class="progress-percent" id="progress-percent">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-bar-fill" id="progress-bar-fill" style="width:0%"></div>
+        </div>
+        <div class="progress-steps">
+          <span class="step-chip" id="step-1">
+            <i class="fa-solid fa-download"></i> Downloading
+          </span>
+          <span class="step-chip" id="step-2">
+            <i class="fa-solid fa-scissors"></i> Clipping
+          </span>
+          <span class="step-chip" id="step-3">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Finishing
+          </span>
+        </div>
+      </div>
+
+    </div><!-- /app-card -->
+
+    <!-- ── Results Section ────────────────────────────────────────────────────── -->
+    <section class="results-section" id="results-section" style="display:none;">
+      <div class="results-header">
+        <div>
+          <div class="results-title">
+            <i class="fa-solid fa-fire gradient-text"></i>
+            Your Viral Shorts
+          </div>
+          <div class="results-subtitle">Click any video to preview, then download individually or as a ZIP</div>
+        </div>
+        <a href="#" class="btn-download-zip" id="btn-download-all" style="display:none;">
+          <i class="fa-solid fa-file-zipper"></i> Download All (ZIP)
+        </a>
+      </div>
+      <div class="shorts-grid" id="shorts-grid"></div>
+    </section>
+
+    <!-- ── Features Section ───────────────────────────────────────────────────── -->
+    <section class="features-section">
+      <div class="section-title-wrap">
+        <h2 class="section-title gradient-text">Why ShortCraft AI?</h2>
+        <p class="section-desc">Everything you need to dominate short-form video</p>
+      </div>
+      <div class="features-grid">
+
+        <div class="glass-panel feature-card">
+          <span class="feature-num">01</span>
+          <div class="feature-icon"><i class="fa-solid fa-brain"></i></div>
+          <h3 class="feature-heading">AI Scene Detection</h3>
+          <p class="feature-text">
+            Our AI analyzes every second of your video to find the most
+            engaging, high-energy moments that keep viewers hooked.
+          </p>
+        </div>
+
+        <div class="glass-panel feature-card">
+          <span class="feature-num">02</span>
+          <div class="feature-icon"><i class="fa-solid fa-closed-captioning"></i></div>
+          <h3 class="feature-heading">Auto Captions</h3>
+          <p class="feature-text">
+            Whisper AI transcribes speech in 90+ languages and renders
+            viral-style animated captions directly on your shorts.
+          </p>
+        </div>
+
+        <div class="glass-panel feature-card">
+          <span class="feature-num">03</span>
+          <div class="feature-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
+          <h3 class="feature-heading">One-Click Export</h3>
+          <p class="feature-text">
+            Shorts are exported in 9:16 format, auto-saved to your
+            D: drive, and ready to upload to YouTube, TikTok, or Reels.
+          </p>
+        </div>
+
+        <div class="glass-panel feature-card">
+          <span class="feature-num">04</span>
+          <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <h3 class="feature-heading">Viral Score</h3>
+          <p class="feature-text">
+            Each clip gets a viral-potential score based on energy, speech
+            clarity, and visual dynamics so you pick winners instantly.
+          </p>
+        </div>
+
+        <div class="glass-panel feature-card">
+          <span class="feature-num">05</span>
+          <div class="feature-icon"><i class="fa-solid fa-upload"></i></div>
+          <h3 class="feature-heading">Upload or YouTube</h3>
+          <p class="feature-text">
+            Paste any YouTube link or upload a local video file — both
+            pipelines are fully supported with drag-and-drop ease.
+          </p>
+        </div>
+
+        <div class="glass-panel feature-card">
+          <span class="feature-num">06</span>
+          <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3 class="feature-heading">100% Local &amp; Private</h3>
+          <p class="feature-text">
+            Your videos never leave your machine. Everything runs locally
+            — no cloud uploads, no data collection, full privacy.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <p>ShortCraft AI &copy; 2025 &mdash; Made with <i class="fa-solid fa-heart text-red"></i> for creators.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
+  <script>
+    // Auth-guard: redirect to login if not authenticated
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/me');
+        if (res.status === 401) {
+          window.location.href = 'login.html';
+        }
+      } catch (_) { /* server offline — still show UI */ }
+    }
+    checkAuth();
+
+    async function logout() {
+      try {
+        await fetch('/api/logout', { method: 'POST' });
+      } catch (_) {}
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
